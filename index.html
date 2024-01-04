@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo Ping-Pong</title>
+    <style>
+        *{ 
+            overflow: hidden;
+            margin:0; 
+            padding:0;
+        }
+    </style>
+</head>
+<body>
+    <canvas></canvas>
+        <script>
+            
+            const canvasElement = document.querySelector("canvas")
+            const canvasContext = canvasElement.getContext("2d")
+            tamX = 10  
+
+                const campo = {
+                    largura: window.innerWidth,
+                    altura: window.innerHeight,
+                    draw: function(){
+                        //desenho do campo
+                        canvasContext.fillStyle = "green"                                 //cor
+                        canvasContext.fillRect(0,0,this.largura,this.altura) // desenha um retangulo a partir do 0,0
+                    },
+                }
+                const linha = {
+                    largura: 15,          //espessura da linha
+                    altura: campo.altura,// posicao da linha
+                    draw: function(){
+                        canvasContext.fillStyle = "white"  //cor
+                        canvasContext.fillRect(campo.largura/2 - this.largura/2,0,this.largura,this.altura) 
+                    },
+                }
+                const raqueteEsquerda ={
+                    x:tamX,
+                    y:150,
+                    largura:linha.largura,
+                    altura:200,
+                    draw:function(){
+                        canvasContext.fillStyle = "white" 
+                        canvasContext.fillRect(this.x,this.y,this.largura,this.altura)
+                    },
+                }
+                const raqueteDireita ={
+                    x:campo.largura - linha.largura - tamX,
+                    y:120,
+                    largura:linha.largura,
+                    altura:200,
+                    draw:function () {
+                        canvasContext.fillStyle = "white" 
+                        canvasContext.fillRect(this.x,this.y,this.largura,this.altura)
+                    },
+                }
+                const bola = {
+                    x: 300,
+                    y: 200,
+                    raio: 20,
+                    draw: function () {
+                        canvasContext.fillStyle = "white" 
+                        canvasContext.beginPath() // como nao tem um fillArc, utilizamos o beginPath para começar o desenho
+                        canvasContext.arc(this.x,this.y,this.raio,0,2 * Math.PI,false)
+                        canvasContext.fill()
+                    },
+
+                }
+
+                const placar = {
+                    humano : 1,
+                    computador : 2,
+                    draw:function(){
+                        canvasContext.font = "bold 72px Arial" //fonte 
+                        canvasContext.textAlign = "center" // centralizacao do texto
+                        canvasContext.textBaseline = "top" //base do texto
+                        canvasContext.fillStyle =  "black" //cor
+                        canvasContext.fillText(this.humano,campo.largura / 4,50)
+                        canvasContext.fillText(this.computador, 3 * campo.largura / 4,50)
+                },
+            }
+
+                function setup(){
+                    // pegando dimensoes da tela
+                    canvasElement.width = canvasContext.width = campo.largura //largura
+                    canvasElement.height = canvasContext.height = campo.altura //altura       
+                }
+
+           
+            function draw(){
+                campo.draw()
+                linha.draw()
+                raqueteEsquerda.draw()
+                raqueteDireita.draw()
+                placar.draw()
+                bola.draw()      
+            } 
+            setup()    
+            draw()      
+
+        </script>
+    </body>
+</html>
