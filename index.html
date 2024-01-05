@@ -20,6 +20,7 @@
             const canvasContext = canvasElement.getContext("2d")
             tamX = 10  
 
+                const mouse = {x: 0 , y: 0}
                 const campo = {
                     largura: window.innerWidth,
                     altura: window.innerHeight,
@@ -39,12 +40,16 @@
                 }
                 const raqueteEsquerda ={
                     x:tamX,
-                    y:150,
+                    y:0,
                     largura:linha.largura,
                     altura:200,
+                    _move: function(){
+                        this.y = mouse.y - (this.altura / 2) //centralizacao do mouse na raquete
+                    },
                     draw:function(){
                         canvasContext.fillStyle = "white" 
                         canvasContext.fillRect(this.x,this.y,this.largura,this.altura)
+                        this._move()
                     },
                 }
                 const raqueteDireita ={
@@ -52,20 +57,31 @@
                     y:120,
                     largura:linha.largura,
                     altura:200,
+                    _move: function(){
+                        this.y = bola.y
+                    },
                     draw:function () {
                         canvasContext.fillStyle = "white" 
                         canvasContext.fillRect(this.x,this.y,this.largura,this.altura)
+                        this._move()
                     },
                 }
                 const bola = {
                     x: 300,
                     y: 200,
+                    velocidade:5,
                     raio: 20,
+                    _move: function(){ //funcoes internas recebem _nome pela convenção
+                        this.x+=1 * this.velocidade
+                        this.y+=1 * this.velocidade
+
+                    },
                     draw: function () {
                         canvasContext.fillStyle = "white" 
                         canvasContext.beginPath() // como nao tem um fillArc, utilizamos o beginPath para começar o desenho
                         canvasContext.arc(this.x,this.y,this.raio,0,2 * Math.PI,false)
                         canvasContext.fill()
+                        this._move()
                     },
 
                 }
@@ -98,8 +114,38 @@
                 placar.draw()
                 bola.draw()      
             } 
-            setup()    
-            draw()      
+           
+
+            //animacoes API requestAnimationFrame
+            window.animateFrame = (function(){
+                return (
+                    window.requestAnimationFrame ||
+                    window.webkitRequesteAnimateFrame ||
+                    window.mozRequestAnimationFrame ||
+                    window.oRequestAnimationFrame ||
+                    window.msRequestAnimationFrame ||
+                    function(callback){
+                       return window.setTimeout(callback, 1000 / 60) // animacao bola
+                    }
+                )
+            })()
+
+            function main (){
+                animateFrame(main)
+                draw()
+            }
+
+            setup()
+            main()
+                
+            canvasElement.addEventListener('mousemove',function(e){
+                mouse.x = e.pageX
+                mouse.y = e.pageY
+
+                console.log(mouse)
+            })
+
+              
 
         </script>
     </body>
