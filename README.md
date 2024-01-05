@@ -1,2 +1,2 @@
 # ping-pong
-Projeto  para treinar JavaScript
+Projeto  para treinar  html/JavaScript
