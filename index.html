@@ -38,7 +38,7 @@
                         canvasContext.fillRect(campo.largura/2 - this.largura/2,0,this.largura,this.altura) 
                     },
                 }
-                const raqueteEsquerda ={
+                const raqueteEsquerda ={ //player
                     x:tamX,
                     y:0,
                     largura:linha.largura,
@@ -52,7 +52,7 @@
                         this._move()
                     },
                 }
-                const raqueteDireita ={
+                const raqueteDireita ={ //computador
                     x:campo.largura - linha.largura - tamX,
                     y:120,
                     largura:linha.largura,
@@ -67,13 +67,67 @@
                     },
                 }
                 const bola = {
-                    x: 300,
-                    y: 200,
-                    velocidade:5,
+                    x: -500,
+                    y: -300,
+                    velocidade:10,
                     raio: 20,
-                    _move: function(){ //funcoes internas recebem _nome pela convenção
-                        this.x+=1 * this.velocidade
-                        this.y+=1 * this.velocidade
+                    direcaoX: 1,
+                    direcaoY: 1,
+                    //funcoes internas recebem _nome pela convenção
+                    _calculaPosicao: function(){
+                        // verifica pontuacao do player 1
+                        if(this.x > campo.largura - this.raio - raqueteDireita.largura - tamX){
+                         // verifica se a raquete direita ta na posicao y da bola   
+                            if(
+                                this.y + this.raio > raqueteDireita.y && 
+                                this.y - this. raio < raqueteDireita.y + raqueteDireita.altura
+                            )   {
+                                this._inverteX() //rebate a bola
+                                } else{
+                                    //pontuar jogador 1
+                                    placar.incrementaPontoHumano()
+                                    this._pontoMarcado()
+                                }
+                        }
+                         // verifica pontuacao do player 2 (PC)
+                         if(this.x <  this.raio + raqueteEsquerda.largura  + tamX){
+                            // verifica se a raquete esquerda ta na posicao y da bola
+                            if(
+                                this.y + this.raio > raqueteEsquerda.y &&
+                                this.y - this.raio < raqueteEsquerda.y + raqueteEsquerda.altura
+                            ) {
+                                this._inverteX() //rebate a bola
+                            } else {
+                                // pontuar jogador 2
+                                placar.incrementaPontoPC()
+                                this._pontoMarcado()
+                            }
+                         }
+                        // verifica laterias superior e inferior do campo
+                        if(
+                            (this.y < 0  - this.raio && this.direcaoY < 0) ||
+                            (this.y > campo.altura - this.raio && this.direcaoY > 0)
+                            ){
+                                //rebate a bola invertendo o sinal do eixo Y
+                            this._inverteY()
+                        }
+                    },
+                    _inverteY:function(){ //inverte direcao
+                        this.direcaoY *=  -1
+
+                    },
+                    _inverteX:function(){ //inverte direcao
+                        this.direcaoX *=  -1
+
+                    },
+                    _pontoMarcado: function(){
+                        //reinicia a bola no meio do campo após um ponto ser marcado
+                        this.x = campo.largura / 2
+                        this.y = campo.altura / 2
+                    },
+                    _move: function(){ //movimentacao da bola
+                        this.x += this.direcaoX * this.velocidade
+                        this.y += this.direcaoY * this.velocidade
 
                     },
                     draw: function () {
@@ -81,6 +135,7 @@
                         canvasContext.beginPath() // como nao tem um fillArc, utilizamos o beginPath para começar o desenho
                         canvasContext.arc(this.x,this.y,this.raio,0,2 * Math.PI,false)
                         canvasContext.fill()
+                        this._calculaPosicao()
                         this._move()
                     },
 
@@ -89,6 +144,12 @@
                 const placar = {
                     humano : 1,
                     computador : 2,
+                    incrementaPontoHumano: function(){
+                        this.humano++
+                    },
+                    incrementaPontoPC: function(){
+                        this.computador++
+                    },
                     draw:function(){
                         canvasContext.font = "bold 72px Arial" //fonte 
                         canvasContext.textAlign = "center" // centralizacao do texto
@@ -137,8 +198,9 @@
 
             setup()
             main()
-                
-            canvasElement.addEventListener('mousemove',function(e){
+
+            //sincronizacao da raquete com mouse
+            canvasElement.addEventListener('mousemove',function(e){ 
                 mouse.x = e.pageX
                 mouse.y = e.pageY
 
