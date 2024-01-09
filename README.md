@@ -1,2 +1,3 @@
 # ping-pong
-Projeto  para treinar  html/JavaScript
+ O clássico Ping Pong desenvolvido em JavaScript.
+ Projeto simples para treinamento da linguagem
