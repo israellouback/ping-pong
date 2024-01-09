@@ -57,8 +57,16 @@
                     y:120,
                     largura:linha.largura,
                     altura:200,
+                    velocidade: 5,
                     _move: function(){
-                        this.y = bola.y
+                        if(this.y + this.altura / 2 < bola.y + bola.raio){
+                            this.y += this.velocidade
+                        } else {
+                            this.y -= this.velocidade
+                        }
+                    },
+                    _aumentaVelocidadeRaquete: function(){
+                        this.velocidade += 2
                     },
                     draw:function () {
                         canvasContext.fillStyle = "white" 
@@ -69,7 +77,7 @@
                 const bola = {
                     x: -500,
                     y: -300,
-                    velocidade:10,
+                    velocidade: 8,
                     raio: 20,
                     direcaoX: 1,
                     direcaoY: 1,
@@ -120,7 +128,12 @@
                         this.direcaoX *=  -1
 
                     },
+                    _ajustaVelocidadeBola: function(){
+                        this.velocidade += 3
+                    },
                     _pontoMarcado: function(){
+                        this._ajustaVelocidadeBola()
+                        raqueteDireita._aumentaVelocidadeRaquete()
                         //reinicia a bola no meio do campo após um ponto ser marcado
                         this.x = campo.largura / 2
                         this.y = campo.altura / 2
